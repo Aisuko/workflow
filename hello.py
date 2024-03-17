@@ -1,5 +1,7 @@
 def hello():
-  """Prints Hello world"""
-  print("Hello world")
+    """Prints Hello world"""
+    print("Hello world")
 
-hello()
+
+if __name__ == "__main__":
+    hello()
