@@ -32,10 +32,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check secrets
+        env:
+          DOCKER_HUB: ${{ secrets.DOCKER_HUB }}
+        run: echo $DOCKER_HUB
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
         if: startsWith(github.ref, 'refs/tags/') != true && success()
         run: |
           docker build -t ${{ secrets.DOCKER_HUB }}/${{ secrets.IMAGE_NAME }}:${GITHUB_SHA::7} .
+      - name: Push Docker image
+        if: startsWith(github.ref, 'refs/tags/') != true && success()
+        run: |
+          docker push ${{ secrets.DOCKER_HUB }}/${{ secrets.IMAGE_NAME }}:${GITHUB_SHA::7}
 
   docker_push:
     name: docker push
